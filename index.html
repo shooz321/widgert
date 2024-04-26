@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quote Widget</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f5f5f5;
+        }
+        #quote {
+            padding: 20px;
+            background-color: white;
+            border-radius: 8px;
+            /* box-shadow: 0 4px 6px rgba(0,0,0,0.1); */
+            max-width: 600px;
+            text-align: center;
+        }
+        #quote-content {
+            /* This is where the quotes will be displayed */
+        }
+        #quote p {
+            margin: 10px 0;
+        }
+        #quote p:first-child {
+            font-style: italic;
+        }
+        #quote p:last-child {
+            text-align: right;
+            font-weight: bold;
+        }
+        #search-container {
+            text-align: center;
+            margin-top: 20px; /* Adjusted for spacing within the widget */
+        }
+        #search-input {
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            width: 300px;
+            margin-right: 10px;
+        }
+        #search-button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        #search-button:hover {
+            background-color: #0056b3;
+        }
+        #error-message {
+            color: red;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div id="quote">
+        <div id="quote-content">
+            <!-- Quotes will be dynamically inserted here -->
+        </div>
+        <!-- Keeping the search-container inside quote but outside the quote-content -->
+        <div id="search-container">
+            <input type="text" id="search-input" placeholder="Search for quotes...">
+            <button id="search-button">Search</button>
+        </div>
+        <!-- Error message placeholder -->
+        <div id="error-message">
+            There were no quotes found with your input.
+        </div>
+    </div>
+    <script src="script.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const quoteWidget = new QuoteWidget('https://api.quotable.io/random', 'quote-content');
+            document.getElementById('search-button').addEventListener('click', () => {
+                const searchTerm = document.getElementById('search-input').value;
+                quoteWidget.searchQuote(searchTerm, handleSearchResult);
+            });
+        });
+
+        function handleSearchResult(error, result) {
+            const errorMessageDiv = document.getElementById('error-message');
+            if (error || !result || result.length === 0) { // Assuming result is an array or similar iterable, adjust based on actual API response
+                // Display specific error message if there's an error or result is empty
+                errorMessageDiv.textContent = "There were no quotes found with your input"; // Set specific message
+                errorMessageDiv.style.display = 'block';
+            } else {
+                // Hide error message and display result if search was successful
+                errorMessageDiv.style.display = 'none';
+                displayQuote(result);
+            }
+        }
+
+        function displayQuote(quote) {
+            // Implementation to display the quote in #quote-content
+            const quoteContentDiv = document.getElementById('quote-content');
+            quoteContentDiv.innerHTML = `<p>${quote.content}</p><p>- ${quote.author}</p>`;
+        }
+    </script>
+</body>
+</html>
